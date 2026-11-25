@@ -286,10 +286,11 @@ func TestFloatHeader(t *testing.T) {
 // extra header cards that override the generated ones.
 func newImageHDU(bitpix, w, h int, data []byte, extra Headers) HDU {
 	headers := Headers{
-		"BITPIX": strconv.Itoa(bitpix),
-		"NAXIS":  "2",
-		"NAXIS1": strconv.Itoa(w),
-		"NAXIS2": strconv.Itoa(h),
+		"XTENSION": string(ExtImage),
+		"BITPIX":   strconv.Itoa(bitpix),
+		"NAXIS":    "2",
+		"NAXIS1":   strconv.Itoa(w),
+		"NAXIS2":   strconv.Itoa(h),
 	}
 	maps.Copy(headers, extra)
 	return HDU{Headers: headers, Data: data}

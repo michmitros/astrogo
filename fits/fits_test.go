@@ -170,7 +170,7 @@ func TestHDUXtension(t *testing.T) {
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			hdu := HDU{Headers: tt.headers}
-			if got := hdu.Xtension(); got != tt.want {
+			if got := hdu.Extension(); string(got) != tt.want {
 				t.Errorf("Xtension() = %q, want %q", got, tt.want)
 			}
 		})

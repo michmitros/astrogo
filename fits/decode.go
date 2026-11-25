@@ -49,6 +49,7 @@ func Decode(r io.Reader) (FitsFile, error) {
 			if len(fitsFile) == 0 {
 				return nil, ErrEmptyFile
 			}
+			
 			return fitsFile, nil
 		case err != nil:
 			return nil, fmt.Errorf("failed to decode HDU #%d: %w", i, err)
@@ -56,6 +57,7 @@ func Decode(r io.Reader) (FitsFile, error) {
 			if i == 0 && !hdu.IsPrimary() {
 				return nil, errors.New("failed to decode FITS file: first HDU is not primary")
 			}
+
 			fitsFile = append(fitsFile, hdu)
 		}
 	}
@@ -202,6 +204,17 @@ func decodeBody(r io.Reader, h Headers) ([]byte, error) {
 		return nil, err
 	}
 
+	// BINTABLE row data is followed by a heap of PCOUNT bytes holding
+	// variable-length array values; it is part of the HDU data.
+	if h["XTENSION"] == "BINTABLE" {
+		pc := parseIntHeader(h["PCOUNT"])
+		if pc < 0 {
+			return nil, fmt.Errorf("invalid PCOUNT: %d", pc)
+		}
+
+		size += pc
+	}
+
 	data := make([]byte, size)
 	buf := make([]byte, BLOCK_SIZE)
 	off := 0
@@ -249,10 +262,12 @@ func intHeader(h Headers, key string) (int, error) {
 	if !ok {
 		return 0, fmt.Errorf("missing %s", key)
 	}
+
 	v, err := strconv.Atoi(raw)
 	if err != nil {
 		return 0, fmt.Errorf("invalid %s: %q", key, raw)
 	}
+
 	return v, nil
 }
 
@@ -285,12 +300,15 @@ func dataSize(h Headers) (int, error) {
 		if err != nil {
 			return 0, err
 		}
+
 		if dim <= 0 {
 			return 0, fmt.Errorf("invalid NAXIS%d: %d", i, dim)
 		}
+
 		if size > maxDataSize/int64(dim) {
 			return 0, fmt.Errorf("data size exceeds maximum %d", maxDataSize)
 		}
+
 		size *= int64(dim)
 	}
 

@@ -54,8 +54,8 @@ func (u HDU) NaxisN(n uint) int {
 
 // Xtension returns the XTENSION value of the HDU (e.g. "IMAGE", "BINTABLE").
 // It returns an empty string if the keyword is absent, as in a primary HDU.
-func (u HDU) Xtension() string {
-	return u.Headers["XTENSION"]
+func (u HDU) Extension() ExtensionType {
+	return ExtensionType(u.Headers["XTENSION"])
 }
 
 // ExtName returns the EXTNAME value of the HDU. It returns an empty string

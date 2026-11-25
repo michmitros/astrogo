@@ -28,8 +28,12 @@ import (
 // or if the data is shorter than required by NAXIS1*NAXIS2 pixels of BITPIX size.
 // Unsupported BITPIX values are read as zero.
 func ToImage(hdu HDU, zscaleContrast float64, zscaleSamples int) (*image.Gray16, error) {
-	if hdu.Naxis() != 2 {
-		return nil, fmt.Errorf("expected 2D image, got NAXIS=%d", hdu.Naxis())
+	if ext := hdu.Extension(); ext != ExtImage {
+		return nil, fmt.Errorf("hdu is not an image, got XTENSION=%s", ext)
+	}
+
+	if naxis := hdu.Naxis(); naxis != 2 {
+		return nil, fmt.Errorf("expected 2D image, got NAXIS=%d", naxis)
 	}
 
 	w, h := hdu.NaxisN(1), hdu.NaxisN(2)
