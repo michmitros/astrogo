@@ -49,7 +49,7 @@ func Decode(r io.Reader) (FitsFile, error) {
 			if len(fitsFile) == 0 {
 				return nil, ErrEmptyFile
 			}
-			
+
 			return fitsFile, nil
 		case err != nil:
 			return nil, fmt.Errorf("failed to decode HDU #%d: %w", i, err)
