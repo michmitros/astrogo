@@ -181,7 +181,7 @@ for i := 0; i < 2; i++ {
 ## Limitations
 
 - Read-only; FITS files cannot be written.
-- Tables (`BINTABLE`, `TABLE`) are not parsed – data is available as raw bytes in `HDU.Data`.
+- Tables (`BINTABLE`, `TABLE`) are parsed with `ToTable`; `TSCALn`/`TZEROn` scaling is not applied to column data (the values are exposed in `ColumnMeta`).
 - `ToImage` supports only two-dimensional images.
 - `CONTINUE` and `HIERARCH` cards are not supported.
 - Compression and the group data convention (`GROUPS`) are not supported.
